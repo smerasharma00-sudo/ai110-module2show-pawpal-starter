@@ -4,8 +4,33 @@
 
 **a. Initial design**
 
-- Briefly describe your initial UML design.
-- What classes did you include, and what responsibilities did you assign to each?
+For PawPal+, I settled on four classes: `Task`, `Pet`, `Owner`, and `Scheduler`.
+
+`Task`, `Pet`, and `Owner` are implemented as Python dataclasses because their main
+job is to hold data rather than make decisions. A `Task` stores a title, duration,
+priority, frequency, and completion status. A `Pet` stores its name, species, and a
+list of `Task` objects. An `Owner` stores their name, how many minutes per day they
+have available for pet care, and a list of `Pet` objects. This mirrors the real-world
+relationship: an owner has multiple pets, and each pet has its own set of care tasks.
+
+`Scheduler` is different — it's a plain class, not a dataclass, because it doesn't
+really hold data of its own beyond a reference to the `Owner` it's working with.
+Its job is entirely behavioral: sorting tasks by priority, building a daily plan
+that fits within the owner's available time, detecting conflicts between tasks,
+and explaining why each task was included or skipped. Separating "data" classes
+from the one "decision-making" class keeps each piece easy to reason about and
+test on its own.
+
+Based on the README, I identified three core actions the app needs to support:
+1. Letting a user enter basic owner and pet info (name, species).
+2. Letting a user add care tasks with a duration and a priority level.
+3. Generating a daily plan that fits tasks into the owner's available time,
+   ordered by priority, along with an explanation of why each task made
+   it into (or got left out of) the plan.
+
+These three actions became the foundation for the UML diagram and the class
+skeletons in `pawpal_system.py`.
+
 
 **b. Design changes**
 

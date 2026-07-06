@@ -60,6 +60,7 @@ Total time scheduled: 75 / 90 minutes
 
 No conflicts detected.
 ```
+
 ## 🧪 Testing PawPal+
 
 ```bash
@@ -73,8 +74,19 @@ pytest --cov
 Sample test output:
 
 ```
-# Paste your pytest output here
+============================= test session starts ==============================
+platform darwin -- Python 3.9.6, pytest-8.4.2, pluggy-1.6.0
+collected 5 items
+
+tests/test_pawpal.py::test_mark_complete_changes_status PASSED           [ 20%]
+tests/test_pawpal.py::test_add_task_increases_pet_task_count PASSED      [ 40%]
+tests/test_pawpal.py::test_sort_by_priority_orders_high_first PASSED     [ 60%]
+tests/test_pawpal.py::test_recurring_task_creates_next_occurrence PASSED [ 80%]
+tests/test_pawpal.py::test_detect_conflicts_flags_overlapping_times PASSED [100%]
+
+============================== 5 passed in 0.01s ===============================
 ```
+**Confidence Level:** ⭐⭐⭐⭐☆ (4/5) — core scheduling, sorting, recurrence, and conflict detection are all tested; UI edge cases (e.g. empty task lists, invalid time formats) could use more coverage.
 
 ## 📐 Smarter Scheduling
 

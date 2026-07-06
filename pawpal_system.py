@@ -10,7 +10,7 @@ class Task:
 
     def mark_complete(self):
         """Mark this task as complete."""
-        pass
+        self.is_complete = True
 @dataclass
 class Pet:
     name: str
@@ -19,11 +19,11 @@ class Pet:
 
     def add_task(self, task: Task):
         """Add a task to this pet's task list."""
-        pass
+        self.tasks.append(task)
 
     def get_tasks(self) -> List[Task]:
         """Return all tasks for this pet."""
-        pass
+        return self.tasks
 @dataclass
 class Owner:
     name: str
@@ -32,11 +32,14 @@ class Owner:
 
     def add_pet(self, pet: Pet):
         """Add a pet to this owner's list of pets."""
-        pass
+        self.pets.append(pet)
 
     def get_all_tasks(self) -> List[Task]:
         """Return all tasks across all of this owner's pets."""
-        pass
+        all_tasks = []
+        for pet in self.pets:
+            all_tasks.extend(pet.get_tasks())
+        return all_tasks
 class Scheduler:
     def __init__(self, owner: Owner):
         self.owner = owner

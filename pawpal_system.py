@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from typing import List, Optional
+PRIORITY_WEIGHT = {"high": 3, "medium": 2, "low": 1}
 @dataclass
 class Task:
     title: str
@@ -46,16 +47,44 @@ class Scheduler:
 
     def sort_by_priority(self, tasks: List[Task]) -> List[Task]:
         """Return tasks sorted from highest to lowest priority."""
-        pass
+        return sorted(tasks, key=lambda task: PRIORITY_WEIGHT[task.priority], reverse=True)
 
     def build_daily_plan(self) -> List[Task]:
         """Greedily select tasks by priority until available_minutes_per_day is used up."""
-        pass
+        all_tasks = self.owner.get_all_tasks()
+        sorted_tasks = self.sort_by_priority(all_tasks)
+
+        plan = []
+        minutes_used = 0
+        budget = self.owner.available_minutes_per_day
+
+        for task in sorted_tasks:
+            if task.is_complete:
+                continue
+            if minutes_used + task.duration_minutes <= budget:
+                plan.append(task)
+                minutes_used += task.duration_minutes
+
+        return plan
 
     def detect_conflicts(self, tasks: List[Task]) -> List[str]:
         """Return warning messages for tasks that overlap or duplicate."""
-        pass
+        warnings = []
+        seen_titles = set()
+
+        for task in tasks:
+            if task.title in seen_titles:
+                warnings.append(f"Duplicate task detected: '{task.title}' appears more than once.")
+            seen_titles.add(task.title)
+
+        return warnings
 
     def explain_plan(self, plan: List[Task]) -> List[str]:
         """Return a human-readable reason for each task's inclusion in the plan."""
-        pass
+        explanations = []
+        for task in plan:
+            explanations.append(
+                f"Included '{task.title}' ({task.duration_minutes} min, {task.priority} priority)."
+            )
+        return explanations
+

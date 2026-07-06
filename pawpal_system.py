@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 from typing import List, Optional
+
 PRIORITY_WEIGHT = {"high": 3, "medium": 2, "low": 1}
+
 @dataclass
 class Task:
     title: str
@@ -8,6 +10,7 @@ class Task:
     priority: str = "medium"
     frequency: str = "once"
     is_complete: bool = False
+    start_time: Optional[str] = None  # "HH:MM" format, e.g. "08:00"
 
     def mark_complete(self):
         """Mark this task as complete."""
@@ -66,25 +69,43 @@ class Scheduler:
                 minutes_used += task.duration_minutes
 
         return plan
+    def get_next_occurrence(self, task: Task) -> Optional[Task]:
+        """If a completed daily/weekly task recurs, return the next instance."""
+        if not task.is_complete or task.frequency == "once":
+            return None
+        return Task(
+            title=task.title,
+            duration_minutes=task.duration_minutes,
+            priority=task.priority,
+            frequency=task.frequency,
+            is_complete=False,
+            start_time=task.start_time,
+        )
+    
 
     def detect_conflicts(self, tasks: List[Task]) -> List[str]:
-        """Return warning messages for tasks that overlap or duplicate."""
+        """Return warning messages for tasks whose time windows overlap."""
         warnings = []
-        seen_titles = set()
+        timed_tasks = [t for t in tasks if t.start_time is not None]
 
-        for task in tasks:
-            if task.title in seen_titles:
-                warnings.append(f"Duplicate task detected: '{task.title}' appears more than once.")
-            seen_titles.add(task.title)
+        def to_minutes(hhmm: str) -> int:
+            h, m = hhmm.split(":")
+            return int(h) * 60 + int(m)
+
+        intervals = []
+        for t in timed_tasks:
+            start = to_minutes(t.start_time)
+            end = start + t.duration_minutes
+            intervals.append((start, end, t))
+
+        intervals.sort(key=lambda x: x[0])
+
+        for i in range(len(intervals) - 1):
+            start_a, end_a, task_a = intervals[i]
+            start_b, end_b, task_b = intervals[i + 1]
+            if start_b < end_a:
+                warnings.append(
+                    f"Conflict: '{task_a.title}' and '{task_b.title}' overlap in time."
+                )
 
         return warnings
-
-    def explain_plan(self, plan: List[Task]) -> List[str]:
-        """Return a human-readable reason for each task's inclusion in the plan."""
-        explanations = []
-        for task in plan:
-            explanations.append(
-                f"Included '{task.title}' ({task.duration_minutes} min, {task.priority} priority)."
-            )
-        return explanations
-

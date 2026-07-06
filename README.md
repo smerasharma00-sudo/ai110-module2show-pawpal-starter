@@ -90,23 +90,21 @@ tests/test_pawpal.py::test_detect_conflicts_flags_overlapping_times PASSED [100%
 
 ## 📐 Smarter Scheduling
 
-> Fill in once you've implemented scheduling logic.
+
 
 | Feature | Method(s) | Notes |
 |---------|-----------|-------|
-| Task sorting | | e.g., by priority, duration |
-| Filtering | | e.g., skip tasks if time runs out |
-| Conflict handling | | e.g., overlapping time slots |
-| Recurring tasks | | e.g., daily vs. weekly |
+| Task sorting | `Scheduler.sort_by_priority()` | Sorts high → medium → low priority |
+| Filtering | `Scheduler.build_daily_plan()` | Greedily includes tasks by priority until time runs out |
+| Conflict handling | `Scheduler.detect_conflicts()` | Flags tasks whose start_time windows overlap |
+| Recurring tasks | `Scheduler.get_next_occurrence()` | Generates the next daily/weekly instance once a task is completed |
 
 ## 📸 Demo Walkthrough
 
-Describe your app in numbered steps so a reader can follow along without watching a video:
+1. Enter your name and available minutes per day, plus your pet's name and species.
+2. Add care tasks with a title, duration, and priority (low/medium/high).
+3. View your current task list in the table below the form.
+4. Click "Generate schedule" to see the greedy scheduling algorithm pick tasks by priority until the time budget is used up, with a plain-language explanation for each included task.
+5. If any tasks have overlapping start times, a warning is shown for each conflict.
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
-
-**Screenshot or video** *(optional)*: <!-- Insert a screenshot or link to a demo video here -->
+Example workflow: add "Morning walk" (20 min, high), "Feeding" (10 min, high), and "Play time" (40 min, medium) with a 30-minute budget → the plan includes the walk and feeding (30/30 minutes), and play time is skipped since it doesn't fit.

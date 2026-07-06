@@ -21,6 +21,7 @@ classDiagram
         +str priority
         +str frequency
         +bool is_complete
+        +str start_time
         +mark_complete()
     }
 
@@ -30,6 +31,7 @@ classDiagram
         +build_daily_plan() List~Task~
         +detect_conflicts(tasks: List~Task~) List~str~
         +explain_plan(plan: List~Task~) List~str~
+        +get_next_occurrence(task: Task) Task
     }
 
     Owner "1" --> "*" Pet : owns
